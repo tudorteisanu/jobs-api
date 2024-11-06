@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  ecommerce-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=ECommerceDb;Username=postgres;Password=your_password
+    depends_on:
+      - postgres
+    volumes:
+      - './:/app'
+    networks:
+      - web
+      - backend
+    ports:
+      - "8082:8082"
+
+  postgres:
+    image: postgres:15 
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: ECommerceDb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+
+networks:
+  web:
+    external: true
+  backend:
+    driver: bridge
